@@ -101,4 +101,3 @@ Backend	              Node.js, Express, Multer
 Simulation	          MATLAB, Simulink
 Weather               API	WeatherAPI.com
 AI Integration	      CSV → VLM Prompting, ML Model Input
-<img width="480" height="141" alt="image" src="https://github.com/user-attachments/assets/a419b8b0-6c7c-49a5-bf29-0c369b639de3" />
