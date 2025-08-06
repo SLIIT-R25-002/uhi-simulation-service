@@ -1,4 +1,4 @@
-🌇 HeatScape Digital Twin Model and High resolution GIS data Viewer & Simulation Engine
+#🌇 HeatScape Digital Twin Model and High resolution GIS data Viewer & Simulation Engine
 
 AI-Powered Urban Thermal Simulation
 A fully integrated 3D visualization and physics-based thermal simulation engine that bridges 3D modeling, real-world weather data, and MATLAB/Simulink to predict urban heat island (UHI) effects at component level. 
@@ -94,10 +94,13 @@ It serves as the bridge between physical geometry, environmental conditions, and
 
 🔧 Technologies Used
 
-Layer	                Technology
-Frontend	            React, Three.js, React Three Fiber, Drei
-Physics	              Raycasting, SunCalc, TransformControls
-Backend	              Node.js, Express, Multer
-Simulation	          MATLAB, Simulink
-Weather               API	WeatherAPI.com
-AI Integration	      CSV → VLM Prompting, ML Model Input
+| Layer                      | Technology                                                              |
+|-------------------------------|-------------------------------------------------------------------------------|
+| Frontend     | React, Three.js, React Three Fiber, Drei     |
+| Backend                    | Node.js, Express, Multer                                               |
+| Physics                    | Raycasting, SunCalc, TransformControls                                           |
+| Simulation     | MATLAB, Simulink, Simscape     |
+| Weather API                   | WeatherAPI.com                                           |
+| AI Integration                    | CSV → VLM Prompting, ML Model Input                                           |      
+               	
+	      
