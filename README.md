@@ -75,22 +75,7 @@ It serves as the bridge between physical geometry, environmental conditions, and
         Machine Learning models (e.g., logistic regression for UHI detection)
         VLM prompt engineering
         Urban planning dashboards
-         
- 📂 Folder Structure
- 
- HeatScape/
-├── frontend/
-│   └── components/
-│       └── SimulationModule/
-│           ├── ModelViewer.js         # This component
-│           └── ...
-├── backend/
-│   ├── server.js                      # Node.js file handler
-│   ├── matlabSimulation.m             # MATLAB script
-│   └── results/                       # Output CSV
-│   └── ThermalSimModel.slx            # Simulink thermal model
-│   └── models/                        # Sample GLB/STL files
-└── README.md
+	
 
 🔧 Technologies Used
 
@@ -104,3 +89,142 @@ It serves as the bridge between physical geometry, environmental conditions, and
 | AI Integration                    | CSV → VLM Prompting, ML Model Input                                           |      
                	
 	      
+🚀 How to Run 
+1. Start the MATLAB Backend 
+bash
+ 
+ 
+1
+2
+cd backend
+node server.js
+ 
+ 
+
+    Ensure MATLAB is in your system PATH. 
+     
+
+2. Start the React Frontend 
+bash
+ 
+ 
+1
+2
+3
+cd frontend
+npm install
+npm start
+ 
+ 
+
+    App runs on http://localhost:3000 
+     
+
+3. Use the Interface 
+
+    Upload a building model
+    Set latitude, longitude, date & time
+    Click "Start Simulation"
+    View results in results/simulation_results.csv
+     
+
+ 
+📤 Sample Output (CSV) 
+csv
+ 
+ 
+1
+2
+3
+4
+Object Name,Thickness (m),Density,Thermal_Conductivity,Area,Mass,Material_type,Wind_Speed,Sun_Exposure,Temperature,Humidity,FinalWallTemperature_C
+Wall_001,0.2,2400,1.8,100,48000,Concrete,6.19,95,35,64,38.7
+Roof_001,0.15,2700,2.3,80,32400,Steel,6.19,100,35,64,41.2
+...
+ 
+ 
+ 
+🤝 Integration with Other Components 
+IoT Localization Service
+	
+Uses snapshot data for
+thermal context
+in VLM prompts
+VLM Recommendation Engine
+	
+Receives
+CSV + image
+to generate
+urban cooling strategies
+UHI Detection Model
+	
+Uses metadata for
+logistic regression
+on heat retention
+ 
+ 
+
+    This component is the data source for AI-driven decision-making. 
+     
+
+ 
+📈 Research Impact 
+
+This module directly supports the HeatScape research goals by: 
+
+    🔬 Enabling fine-grained thermal simulation
+    🌐 Bridging digital twins with real-world conditions
+    🤖 Feeding AI models with structured, physics-based data
+    🏙️ Supporting smart city planning and urban heat mitigation
+     
+
+ 
+📄 License 
+
+This project is licensed under the MIT License – see the LICENSE  file for details. 
+ 
+🎓 Academic Context 
+
+This component is part of the HeatScape research initiative at SLIIT, focusing on: 
+
+    🏙️ Urban Heat Island (UHI) Detection
+    🌡️ Thermal Simulation & AI
+    🌐 3D Digital Twin Integration
+    🤖 Vision-Language Model (VLM) Prompting
+     
+
+Research Team 
+
+    Institution: Sri Lanka Institute of Information Technology (SLIIT)
+    Year: 4th Year Research Project
+    Project Code: R25-002
+     
+
+ 
+🆘 Support 
+
+For issues or questions: 
+
+    🐞 Open an Issue 
+    📧 Contact the development team
+    📚 Refer to Three.js Docs  and MATLAB Simulink 
+     
+
+ 
+🌐 Live Demo 
+
+👉 View Live at HeatScape  
+ 
+🌟 Future Enhancements 
+
+    🌙 Night-time simulation with artificial lighting
+    🌀 Real-time wind particle effects
+    📊 Dashboard with exposure analytics
+    🤖 Auto-generate VLM prompts from simulation results
+    ☁️ Cloud-based MATLAB execution (Azure/AWS)
+     
+
+ 
+
+    HeatScape: Where Urban Design Meets AI-Powered Climate Intelligence 🌆 
+     
