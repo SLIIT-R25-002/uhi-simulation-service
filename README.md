@@ -1,7 +1,7 @@
 # 🌇 HeatScape Digital Twin Model and High resolution GIS data Viewer & Simulation Engine
 
 AI-Powered Urban Thermal Simulation
-A fully integrated 3D visualization and physics-based thermal simulation engine that bridges 3D modeling, real-world weather data, and MATLAB/Simulink to predict urban heat island (UHI) effects at component level. 
+A fully integrated Digital visualization and physics-based thermal simulation engine that bridges 3D modeling, real-world weather data, and MATLAB/Simulink to predict urban heat island (UHI) effects at component level. 
 
 🌟 Overview 
 
