@@ -19,7 +19,8 @@ if (!fs.existsSync(RESULTS_DIR)) fs.mkdirSync(RESULTS_DIR, { recursive: true });
 
 // Middleware
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use('/results', express.static(RESULTS_DIR));
 
 // File upload
@@ -121,6 +122,69 @@ app.post('/upload-simulation-input', upload.single('file'), (req, res) => {
 
     matlabProcess.stdout.on('data', (data) => console.log(`MATLAB: ${data}`));
     matlabProcess.stderr.on('data', (data) => console.error(`MATLAB Error: ${data}`));
+});
+
+// ✅ New: Process image + CSV → Send to VLM API
+app.post('/get_recommendation', express.json({ limit: '10mb' }), async (req, res) => {
+    const { image: imageBase64, timestamp } = req.body;
+
+    if (!imageBase64) {
+        return res.status(400).json({ error: 'No image provided' });
+    }
+
+    console.log('🖼️ Received base64 image for recommendation');
+    console.log('📸 Timestamp:', timestamp);
+    console.log('🧩 Image Data Length:', imageBase64.length, 'characters');
+
+    const outputCsvPath = path.join(RESULTS_DIR, 'simulation_results.csv');
+
+    if (!fs.existsSync(outputCsvPath)) {
+        console.warn('⚠️ simulation_results.csv not found. Using empty data.');
+    }
+
+    try {
+        // 🚀 Transform CSV to prediction format
+        const predictionData = fs.existsSync(outputCsvPath)
+            ? await transformToPredictionData(outputCsvPath)
+            : [['building', 'Unknown', 35.0, 60, 100]]; // fallback
+
+        // 📦 Prepare payload for VLM
+        const payload = {
+            data: predictionData,
+            image_base64: imageBase64
+        };
+
+        console.log('📤 Forwarding to VLM API:', 'http://localhost:5000/recommend');
+        console.log('📊 Prediction data rows:', predictionData.length);
+
+        // 🌐 Call the VLM recommendation API
+        const vlmRes = await fetch('http://localhost:5000/recommend', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        if (!vlmRes.ok) {
+            throw new Error(`VLM API responded with status: ${vlmRes.status}`);
+        }
+
+        const recommendation = await vlmRes.json();
+
+        // ✅ Success: Forward response to frontend
+        res.json({
+            success: true,
+            message: 'Recommendation generated successfully',
+            recommendation
+        });
+
+    } catch (err) {
+        console.error('❌ Failed to generate recommendation:', err);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to process recommendation',
+            details: err.message
+        });
+    }
 });
 
 // Health check
