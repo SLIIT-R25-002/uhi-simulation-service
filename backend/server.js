@@ -16,6 +16,9 @@ const PORT = process.env.PORT || 4200;
 const UPLOADS_DIR = path.join(__dirname, 'uploads');
 const RESULTS_DIR = path.join(__dirname, 'results');
 
+const PREDICT_API_URL = process.env.PREDICT_API_URL || 'http://127.0.0.1:5002/predict';
+const RECOMMEND_API_URL = process.env.RECOMMEND_API_URL || 'http://127.0.0.1:5002/recommend';
+
 if (!fs.existsSync(UPLOADS_DIR)) fs.mkdirSync(UPLOADS_DIR, { recursive: true });
 if (!fs.existsSync(RESULTS_DIR)) fs.mkdirSync(RESULTS_DIR, { recursive: true });
 
@@ -93,7 +96,7 @@ app.post('/upload-simulation-input', upload.single('file'), (req, res) => {
                 // 🚀 Transform CSV to segments format
                 const segments = await transformToSegments(outputCsvPath);
                 // 📤 Send to Flask ML model
-                const predictRes = await fetch('http://127.0.0.1:5002/predict', {
+                const predictRes = await fetch(PREDICT_API_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ segments })
@@ -161,10 +164,9 @@ app.post('/get_recommendation', express.json({ limit: '10mb' }), async (req, res
             image_base64: imageBase64
         };
 
-        console.log('📤 Forwarding to VLM API:', 'http://localhost:5002/recommend');
         console.log('📊 Segment count:', segments.length);
         // 🌐 Call the VLM recommendation API
-        const vlmRes = await fetch('http://127.0.0.1:5002/recommend', {
+        const vlmRes = await fetch(RECOMMEND_API_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
