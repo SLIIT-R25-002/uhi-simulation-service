@@ -16,8 +16,8 @@ RUN apt-get update && apt-get install -y \
 COPY package*.json ./
 
 # Install Node.js dependencies
-# Install all dependencies (including dev dependencies for development mode)
-RUN npm ci
+# Use npm install to handle package-lock.json sync issues
+RUN npm install
 
 # Copy application code
 COPY . .
