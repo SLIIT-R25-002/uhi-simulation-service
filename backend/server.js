@@ -4,7 +4,9 @@ const cors = require('cors');
 const path = require('path');
 const { exec } = require('child_process');
 const fs = require('fs');
-const csv = require('csv-parser'); // ← Add this
+const csv = require('csv-parser');
+const fetch = require('node-fetch');
+const axios = require('axios');
 require('dotenv').config();
 
 const app = express();
@@ -30,26 +32,26 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-// ✅ Helper: Read CSV and transform to prediction format
-function transformToPredictionData(csvPath) {
+// ✅ Helper: Transform CSV to segments array
+function transformToSegments(csvPath) {
     return new Promise((resolve, reject) => {
-        const data = [];
+        const segments = [];
         fs.createReadStream(csvPath)
             .pipe(csv())
             .on('data', (row) => {
                 try {
-                    data.push([
-                        'building', // fixed first value
-                        row.Material_type || 'Unknown',
-                        parseFloat(row.FinalWallTemperature_C) || 0,
-                        parseFloat(row.Humidity) || 0,
-                        parseFloat(row.Area * 100) || 0
-                    ]);
+                    segments.push({
+                        label: row['ObjectName'] || 'Unnamed',
+                        material: (row.Material_type || 'Unknown').toLowerCase(),
+                        temp: parseFloat(row.FinalWallTemperature_C) || 0,
+                        humidity: parseFloat(row.Humidity) || 0,
+                        area: parseFloat(row.Area) || 0
+                    });
                 } catch (err) {
                     console.warn('Skipping invalid row:', row);
                 }
             })
-            .on('end', () => resolve(data))
+            .on('end', () => resolve(segments))
             .on('error', reject);
     });
 }
@@ -88,14 +90,13 @@ app.post('/upload-simulation-input', upload.single('file'), (req, res) => {
             console.log('✅ simulation_results.csv generated. Preparing prediction payload...');
 
             try {
-                // 🚀 Transform CSV to prediction format
-                const predictionData = await transformToPredictionData(outputCsvPath);
-
+                // 🚀 Transform CSV to segments format
+                const segments = await transformToSegments(outputCsvPath);
                 // 📤 Send to Flask ML model
-                const predictRes = await fetch('http://127.0.0.1:5000/predict', {
+                const predictRes = await fetch('http://127.0.0.1:5002/predict', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ data: predictionData })
+                    body: JSON.stringify({ segments })
                 });
 
                 const predictionResult = await predictRes.json();
@@ -143,22 +144,27 @@ app.post('/get_recommendation', express.json({ limit: '10mb' }), async (req, res
     }
 
     try {
-        // 🚀 Transform CSV to prediction format
-        const predictionData = fs.existsSync(outputCsvPath)
-            ? await transformToPredictionData(outputCsvPath)
-            : [['building', 'Unknown', 35.0, 60, 100]]; // fallback
+        // 🚀 Transform CSV to segments format
+        const segments = fs.existsSync(outputCsvPath)
+            ? await transformToSegments(outputCsvPath)
+            : [{
+                label: 'Unknown',
+                material: 'concrete',
+                temp: 35.0,
+                humidity: 60,
+                area: 100
+            }];
 
         // 📦 Prepare payload for VLM
         const payload = {
-            data: predictionData,
+            segments,
             image_base64: imageBase64
         };
 
-        console.log('📤 Forwarding to VLM API:', 'http://localhost:5000/recommend');
-        console.log('📊 Prediction data rows:', predictionData.length);
-
+        console.log('📤 Forwarding to VLM API:', 'http://localhost:5002/recommend');
+        console.log('📊 Segment count:', segments.length);
         // 🌐 Call the VLM recommendation API
-        const vlmRes = await fetch('http://localhost:5000/recommend', {
+        const vlmRes = await fetch('http://127.0.0.1:5002/recommend', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
