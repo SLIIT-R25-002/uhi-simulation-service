@@ -182,7 +182,8 @@ app.post('/get_recommendation', express.json({ limit: '10mb' }), async (req, res
         res.json({
             success: true,
             message: 'Recommendation generated successfully',
-            recommendation
+            recommendation,
+            segments
         });
 
     } catch (err) {
