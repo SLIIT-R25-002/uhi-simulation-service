@@ -60,7 +60,7 @@ function transformToSegments(csvPath) {
 }
 
 // Route: Upload CSV → Run MATLAB → Send to /predict
-app.post('/upload-simulation-input', upload.single('file'), (req, res) => {
+app.post('/api/simulation/upload-simulation-input', upload.single('file'), (req, res) => {
     const inputCsvPath = path.join(UPLOADS_DIR, 'simulation_input.csv');
     const outputCsvPath = path.join(RESULTS_DIR, 'simulation_results.csv');
 
@@ -129,7 +129,7 @@ app.post('/upload-simulation-input', upload.single('file'), (req, res) => {
 });
 
 // ✅ New: Process image + CSV → Send to VLM API
-app.post('/get_recommendation', express.json({ limit: '10mb' }), async (req, res) => {
+app.post('/api/simulation/get_recommendation', express.json({ limit: '10mb' }), async (req, res) => {
     const { image: imageBase64, timestamp } = req.body;
 
     if (!imageBase64) {
@@ -197,7 +197,7 @@ app.post('/get_recommendation', express.json({ limit: '10mb' }), async (req, res
 });
 
 // Health check
-app.get('/health', (req, res) => {
+app.get('/api/simulation/health', (req, res) => {
     res.json({ status: 'Backend server is running', timestamp: new Date().toISOString() });
 });
 
