@@ -16,8 +16,8 @@ const PORT = process.env.PORT || 4200;
 const UPLOADS_DIR = path.join(__dirname, 'uploads');
 const RESULTS_DIR = path.join(__dirname, 'results');
 
-const PREDICT_API_URL = process.env.PREDICT_API_URL || 'http://127.0.0.1:5002/predict';
-const RECOMMEND_API_URL = process.env.RECOMMEND_API_URL || 'http://127.0.0.1:5002/recommend';
+const PREDICT_API_URL = process.env.PREDICT_API_URL || 'https://macular-patrimonially-olinda.ngrok-free.dev/predict';
+const RECOMMEND_API_URL = process.env.RECOMMEND_API_URL || 'https://macular-patrimonially-olinda.ngrok-free.dev/recommend';
 
 if (!fs.existsSync(UPLOADS_DIR)) fs.mkdirSync(UPLOADS_DIR, { recursive: true });
 if (!fs.existsSync(RESULTS_DIR)) fs.mkdirSync(RESULTS_DIR, { recursive: true });
