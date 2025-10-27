@@ -35,7 +35,7 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-// ✅ Helper: Transform CSV to segments array
+// Transform CSV to segments array
 function transformToSegments(csvPath) {
     return new Promise((resolve, reject) => {
         const segments = [];
@@ -93,9 +93,9 @@ app.post('/api/simulation/upload-simulation-input', upload.single('file'), (req,
             console.log('✅ simulation_results.csv generated. Preparing prediction payload...');
 
             try {
-                // 🚀 Transform CSV to segments format
+                // Transform CSV to segments format
                 const segments = await transformToSegments(outputCsvPath);
-                // 📤 Send to Flask ML model
+                // Send to Flask ML model
                 const predictRes = await fetch(PREDICT_API_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -104,7 +104,7 @@ app.post('/api/simulation/upload-simulation-input', upload.single('file'), (req,
 
                 const predictionResult = await predictRes.json();
 
-                // ✅ Success: Return both simulation and prediction
+                // Success: Return both simulation and prediction
                 res.json({
                     success: true,
                     message: 'Simulation and prediction completed',
@@ -128,7 +128,7 @@ app.post('/api/simulation/upload-simulation-input', upload.single('file'), (req,
     matlabProcess.stderr.on('data', (data) => console.error(`MATLAB Error: ${data}`));
 });
 
-// ✅ New: Process image + CSV → Send to VLM API
+// Process image + CSV → Send to VLM API
 app.post('/api/simulation/get_recommendation', express.json({ limit: '10mb' }), async (req, res) => {
     const { image: imageBase64, timestamp } = req.body;
 
@@ -147,7 +147,7 @@ app.post('/api/simulation/get_recommendation', express.json({ limit: '10mb' }), 
     }
 
     try {
-        // 🚀 Transform CSV to segments format
+        // Transform CSV to segments format
         const segments = fs.existsSync(outputCsvPath)
             ? await transformToSegments(outputCsvPath)
             : [{
@@ -158,14 +158,14 @@ app.post('/api/simulation/get_recommendation', express.json({ limit: '10mb' }), 
                 area: 100
             }];
 
-        // 📦 Prepare payload for VLM
+        // Prepare payload for VLM
         const payload = {
             segments,
             image_base64: imageBase64
         };
 
         console.log('📊 Segment count:', segments.length);
-        // 🌐 Call the VLM recommendation API
+        // Call the VLM recommendation API
         const vlmRes = await fetch(RECOMMEND_API_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
